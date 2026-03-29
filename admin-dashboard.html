@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Luxury Hotel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --gold: #c9a962;
+            --gold-dark: #a68b4b;
+            --primary: #1a1a2e;
+            --primary-light: #16213e;
+            --white: #ffffff;
+            --gray-50: #f8f9fa;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: var(--primary);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header .material-icons-round {
+            font-size: 28px;
+            color: var(--gold);
+        }
+
+        .sidebar-header .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 4px;
+        }
+
+        .nav-item .material-icons-round { font-size: 20px; }
+        .nav-item:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+        .nav-item.active { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--primary); }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .topbar {
+            height: 70px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .admin-info div { display: flex; flex-direction: column; }
+        .admin-name { font-weight: 600; font-size: 14px; }
+        .admin-role { font-size: 12px; color: var(--gray-500); text-transform: capitalize; }
+
+        /* Content */
+        .content-section {
+            padding: 32px;
+            display: none;
+        }
+        .content-section.active { display: block; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-icon .material-icons-round { font-size: 28px; color: white; }
+        .stat-card.blue .stat-icon { background: linear-gradient(135deg, var(--blue), #2563eb); }
+        .stat-card.orange .stat-icon { background: linear-gradient(135deg, var(--warning), #ea580c); }
+        .stat-card.green .stat-icon { background: linear-gradient(135deg, var(--success), #059669); }
+        .stat-card.purple .stat-icon { background: linear-gradient(135deg, var(--purple), #7c3aed); }
+
+        .stat-number { font-size: 28px; font-weight: 800; color: var(--gray-800); }
+        .stat-label { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .card-header h2 { font-size: 16px; font-weight: 700; color: var(--gray-800); }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th {
+            background: var(--gray-50);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+        .data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 14px;
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: var(--gray-50); }
+
+        /* Badge */
+        .status-badge, .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge.pending { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .status-badge.confirmed, .status-badge.active { background: rgba(16,185,129,0.12); color: var(--success); }
+        .status-badge.checked_in { background: rgba(59,130,246,0.12); color: var(--blue); }
+        .status-badge.checked_out, .status-badge.completed { background: rgba(107,114,128,0.12); color: var(--gray-600); }
+        .status-badge.cancelled { background: rgba(239,68,68,0.12); color: var(--danger); }
+        
+        .role-badge.admin { background: rgba(139, 92, 246, 0.1); color: var(--purple); }
+        .role-badge.staff { background: rgba(59, 130, 246, 0.1); color: var(--blue); }
+        .role-badge.customer { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+
+        /* Action Buttons */
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .action-btn .material-icons-round { font-size: 18px; }
+        .action-btn.edit { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .action-btn.delete { background: rgba(239,68,68,0.12); color: var(--danger); }
+        .action-btn:hover { transform: scale(1.1); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--primary); }
+        .btn-outline { background: transparent; border: 2px solid var(--gray-200); color: var(--gray-600); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 450px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: all 0.3s;
+        }
+        .modal-overlay.show .modal { transform: scale(1); }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 700; }
+        .modal-header button {
+            background: var(--gray-100);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--gray-500);
+        }
+
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .form-control:focus { outline: none; border-color: var(--gold); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--white);
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast .material-icons-round { font-size: 22px; color: var(--success); }
+        .toast.error .material-icons-round { color: var(--danger); }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="material-icons-round">admin_panel_settings</span>
+            <span class="logo">Admin</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <button class="nav-item active" data-section="dashboard">
+                <span class="material-icons-round">dashboard</span>
+                Dashboard
+            </button>
+            <button class="nav-item" data-section="bookings">
+                <span class="material-icons-round">event_note</span>
+                Bookings
+            </button>
+            <button class="nav-item" data-section="rooms">
+                <span class="material-icons-round">hotel</span>
+                Rooms
+            </button>
+            <button class="nav-item" data-section="services">
+                <span class="material-icons-round">spa</span>
+                Services
+            </button>
+            <button class="nav-item" data-section="users">
+                <span class="material-icons-round">people</span>
+                Clients
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="nav-item">
+                <span class="material-icons-round">web</span>
+                View Website
+            </a>
+            <button class="nav-item" id="logoutBtn">
+                <span class="material-icons-round">logout</span>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1 id="pageTitle">Dashboard</h1>
+            <div class="admin-info">
+                <div>
+                    <span class="admin-name" id="adminName">Admin</span>
+                    <span class="admin-role" id="adminRole">Administrator</span>
+                </div>
+                <div class="admin-avatar" id="adminAvatar">A</div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon"><span class="material-icons-round">event_note</span></div>
+                    <div>
+                        <span class="stat-number" id="statTotal">0</span>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-icon"><span class="material-icons-round">schedule</span></div>
+                    <div>
+                        <span class="stat-number" id="statPending">0</span>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon"><span class="material-icons-round">attach_money</span></div>
+                    <div>
+                        <span class="stat-number" id="statRevenue">$0</span>
+                        <div class="stat-label">Revenue</div>
+                    </div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-icon"><span class="material-icons-round">people</span></div>
+                    <div>
+                        <span class="stat-number" id="statUsers">0</span>
+                        <div class="stat-label">Clients</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Bookings</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Check In</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentBookings">
+                        <tr><td colspan="6" class="loading">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bookings Section -->
+        <section class="content-section" id="bookings">
+            <div class="card">
+                <div class="card-header">
+                    <h2>All Bookings</h2>
+                </div>
+                <table class="data-table" id="bookingsTableContainer">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Guest Name</th>
+                            <th>Email</th>
+                            <th>Room</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTable">
+                        <tr><td colspan="9" class="loading">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Rooms Section -->
+        <section class="content-section" id="rooms">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Room Management</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Room #</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price/Night</th>
+                            <th>Capacity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomsTable">
+                        <tr><td colspan="8" class="loading">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="content-section" id="services">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Services Management</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTable">
+                        <tr><td colspan="7" class="loading">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section class="content-section" id="users">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Client Management</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr><td colspan="8" class="loading">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Booking Modal -->
+    <div class="modal-overlay" id="editBookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Update Booking Status</h3>
+                <button onclick="closeModal('editBookingModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editBookingId">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="editBookingStatus" class="form-control">
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="checked_in">Checked In</option>
+                        <option value="checked_out">Checked Out</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editBookingModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveBooking()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal-overlay" id="editUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Update User</h3>
+                <button onclick="closeModal('editUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="editUserName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="editUserPhone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="editUserRole" class="form-control">
+                        <option value="customer">Customer</option>
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editUserModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Room Modal -->
+    <div class="modal-overlay" id="editRoomModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Room</h3>
+                <button onclick="closeModal('editRoomModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editRoomId">
+                <div class="form-group">
+                    <label>Room Name</label>
+                    <input type="text" id="editRoomName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Price per Night</label>
+                    <input type="number" id="editRoomPrice" class="form-control" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Available</label>
+                    <select id="editRoomAvailable" class="form-control">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editRoomModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRoom()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div class="modal-overlay" id="editServiceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Service</h3>
+                <button onclick="closeModal('editServiceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editServiceId">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="editServiceName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="editServiceDesc" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" id="editServicePrice" class="form-control" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes)</label>
+                    <input type="number" id="editServiceDuration" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editServiceModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveService()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="material-icons-round">check_circle</span>
+        <span id="toastMsg">Success!</span>
+    </div>
+
+    <script>
+        // Set this to your php file path if they are in different folders.
+        // If update.php and delete.php are in the same folder as this html, leave it empty.
+        const API = ''; 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAdmin = localStorage.getItem('isAdmin');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!isAdmin || !user.role) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            document.getElementById('adminName').textContent = user.name || 'Admin';
+            document.getElementById('adminRole').textContent = user.role;
+            document.getElementById('adminAvatar').textContent = (user.name || 'A').charAt(0);
+            
+            loadDashboard();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.clear();
+            window.location.href = 'admin-login.html';
+        });
+
+        document.querySelectorAll('.nav-item[data-section]').forEach(function(item) {
+            item.addEventListener('click', function() {
+                showSection(this.dataset.section);
+            });
+        });
+
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(function(s) {
+                s.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(function(n) {
+                n.classList.remove('active');
+            });
+            
+            document.getElementById(id).classList.add('active');
+            document.querySelector('[data-section="' + id + '"]').classList.add('active');
+            document.getElementById('pageTitle').textContent = id.charAt(0).toUpperCase() + id.slice(1);
+            
+            switch(id) {
+                case 'dashboard': loadDashboard(); break;
+                case 'bookings': loadBookings(); break;
+                case 'rooms': loadRooms(); break;
+                case 'services': loadServices(); break;
+                case 'users': loadUsers(); break;
+            }
+        }
+
+        function loadDashboard() {
+            loadStats();
+            loadRecentBookings();
+        }
+
+        function loadStats() {
+            fetch(API + 'read.php?stats')
+                .then(r => r.json())
+                .then(result => {
+                    if (result.success) {
+                        document.getElementById('statTotal').textContent = result.data.total || 0;
+                        document.getElementById('statPending').textContent = result.data.pending || 0;
+                        document.getElementById('statRevenue').textContent = '$' + (result.data.revenue || 0).toFixed(0);
+                    }
+                });
+        }
+
+        function loadRecentBookings() {
+            fetch(API + 'read.php?bookings')
+                .then(r => r.json())
+                .then(result => {
+                    let html = '';
+                    if (result.success && result.data.length > 0) {
+                        result.data.slice(0, 5).forEach(b => {
+                            html += `<tr>
+                                <td><strong>#${b.booking_id}</strong></td>
+                                <td>${b.customer_name || 'Guest'}</td>
+                                <td>${b.room_name || 'N/A'}</td>
+                                <td>${formatDate(b.check_in_date)}</td>
+                                <td><span class="status-badge ${b.status}">${b.status}</span></td>
+                                <td><strong>$${b.total_amount}</strong></td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById('recentBookings').innerHTML = html || '<tr><td colspan="6" class="loading">No bookings yet</td></tr>';
+                });
+        }
+
+        function loadBookings() {
+            fetch(API + 'read.php?bookings')
+                .then(r => r.json())
+                .then(result => {
+                    let html = '';
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(b => {
+                            html += `<tr>
+                                <td><strong>#${b.booking_id}</strong></td>
+                                <td>${b.customer_name || 'Guest'}</td>
+                                <td><small>${b.customer_email || '-'}</small></td>
+                                <td>${b.room_name || 'N/A'}</td>
+                                <td>${formatDate(b.check_in_date)}</td>
+                                <td>${formatDate(b.check_out_date)}</td>
+                                <td><span class="status-badge ${b.status}">${b.status}</span></td>
+                                <td><strong>$${b.total_amount}</strong></td>
+                                <td>
+                                    <button class="action-btn edit" onclick="openEditBooking(${b.booking_id},'${b.status}')"><span class="material-icons-round">edit</span></button>
+                                    <button class="action-btn delete" onclick="deleteBooking(${b.booking_id})"><span class="material-icons-round">delete</span></button>
+                                </td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById('bookingsTable').innerHTML = html || '<tr><td colspan="9" class="loading">No bookings yet</td></tr>';
+                });
+        }
+
+        function loadRooms() {
+            fetch(API + 'read.php?rooms')
+                .then(r => r.json())
+                .then(result => {
+                    let html = '';
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(r => {
+                            // Store data safely in JSON
+                            const info = {
+                                name: r.name,
+                                price: r.price_per_night,
+                                available: r.is_available
+                            };
+                            // Convert to JSON and escape quotes for HTML attribute
+                            const safeInfo = JSON.stringify(info).replace(/"/g, '&quot;');
+
+                            html += `<tr>
+                                <td><strong>#${r.room_id}</strong></td>
+                                <td><strong>${r.room_number}</strong></td>
+                                <td>${r.name}</td>
+                                <td>${r.category_name || 'N/A'}</td>
+                                <td><strong>$${Number(info.price).toFixed(2)}</strong></td>
+                                <td>${r.capacity} persons</td>
+                                <td><span class="status-badge ${r.is_available ? 'confirmed' : 'cancelled'}">${r.is_available ? 'Available' : 'Unavailable'}</span></td>
+                                <td>
+                                    <button class="action-btn edit" data-type="room" data-id="${r.room_id}" data-info='${safeInfo}'><span class="material-icons-round">edit</span></button>
+                                    <button class="action-btn delete" onclick="deleteRoom(${r.room_id})"><span class="material-icons-round">delete</span></button>
+                                </td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById('roomsTable').innerHTML = html || '<tr><td colspan="8" class="loading">No rooms found</td></tr>';
+                });
+        }
+
+        function loadServices() {
+            fetch(API + 'read.php?services')
+                .then(r => r.json())
+                .then(result => {
+                    let html = '';
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(s => {
+                            // Store data safely
+                            const info = {
+                                name: s.name,
+                                desc: s.description || '',
+                                price: s.price,
+                                duration: s.duration_minutes || 0
+                            };
+                            // Convert to JSON and escape quotes
+                            const safeInfo = JSON.stringify(info).replace(/"/g, '&quot;');
+
+                            html += `<tr>
+                                <td><strong>#${s.service_id}</strong></td>
+                                <td><strong>${s.name}</strong></td>
+                                <td><small>${(s.description || '').substring(0,40)}...</small></td>
+                                <td><strong>$${Number(info.price).toFixed(2)}</strong></td>
+                                <td>${info.duration ? info.duration + ' min' : '-'}</td>
+                                <td><span class="status-badge ${s.is_active ? 'confirmed' : 'cancelled'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
+                                <td>
+                                    <button class="action-btn edit" data-type="service" data-id="${s.service_id}" data-info='${safeInfo}'><span class="material-icons-round">edit</span></button>
+                                    <button class="action-btn delete" onclick="deleteService(${s.service_id})"><span class="material-icons-round">delete</span></button>
+                                </td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById('servicesTable').innerHTML = html || '<tr><td colspan="7" class="loading">No services found</td></tr>';
+                });
+        }
+
+        function loadUsers() {
+            fetch(API + 'read.php?users')
+                .then(r => r.json())
+                .then(result => {
+                    let html = '';
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(u => {
+                            // Store data safely
+                            const info = {
+                                name: u.name,
+                                phone: u.phone || '',
+                                role: u.role
+                            };
+                            const safeInfo = JSON.stringify(info).replace(/"/g, '&quot;');
+
+                            html += `<tr>
+                                <td><strong>#${u.user_id}</strong></td>
+                                <td><strong>${u.name}</strong></td>
+                                <td>${u.email}</td>
+                                <td>${u.phone}</td>
+                                <td><span class="role-badge ${u.role}">${u.role}</span></td>
+                                <td><span class="status-badge ${u.is_active ? 'confirmed' : 'cancelled'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+                                <td>${formatDate(u.created_at)}</td>
+                                <td>
+                                    <button class="action-btn edit" data-type="user" data-id="${u.user_id}" data-info='${safeInfo}'><span class="material-icons-round">edit</span></button>
+                                    <button class="action-btn delete" onclick="deleteUser(${u.user_id})"><span class="material-icons-round">delete</span></button>
+                                </td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById('usersTable').innerHTML = html || '<tr><td colspan="8" class="loading">No clients yet</td></tr>';
+                });
+        }
+
+        // This listener handles all "Edit" clicks using the data-attributes
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.action-btn.edit');
+            if (!btn) return;
+
+            const type = btn.dataset.type;
+            const id = parseInt(btn.dataset.id);
+            
+            // Parse back to object
+            const info = JSON.parse(btn.dataset.info);
+
+            if (type === 'room') {
+                openEditRoom(id, info.name, info.price, info.available);
+            } else if (type === 'service') {
+                openEditService(id, info.name, info.desc, info.price, info.duration);
+            } else if (type === 'user') {
+                openEditUser(id, info.name, info.phone, info.role);
+            }
+        });
+
+        // --- Modal Openers ---
+
+        function openEditBooking(id, status) {
+            document.getElementById('editBookingId').value = id;
+            document.getElementById('editBookingStatus').value = status;
+            document.getElementById('editBookingModal').classList.add('show');
+        }
+
+        function openEditUser(id, name, phone, role) {
+            document.getElementById('editUserId').value = id;
+            document.getElementById('editUserName').value = name;
+            document.getElementById('editUserPhone').value = phone;
+            document.getElementById('editUserRole').value = role;
+            document.getElementById('editUserModal').classList.add('show');
+        }
+
+        function openEditRoom(id, name, price, available) {
+            document.getElementById('editRoomId').value = id;
+            document.getElementById('editRoomName').value = name;
+            document.getElementById('editRoomPrice').value = price;
+            document.getElementById('editRoomAvailable').value = available ? 1 : 0;
+            document.getElementById('editRoomModal').classList.add('show');
+        }
+
+        function openEditService(id, name, desc, price, duration) {
+            document.getElementById('editServiceId').value = id;
+            document.getElementById('editServiceName').value = name;
+            document.getElementById('editServiceDesc').value = desc;
+            document.getElementById('editServicePrice').value = price;
+            document.getElementById('editServiceDuration').value = duration;
+            document.getElementById('editServiceModal').classList.add('show');
+        }
+
+        // --- Save Functions ---
+
+        function saveBooking() {
+            const id = document.getElementById('editBookingId').value;
+            const status = document.getElementById('editBookingStatus').value;
+            fetch('update.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({booking_id: parseInt(id), status: status})
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('Booking updated successfully!');
+                    closeModal('editBookingModal');
+                    loadBookings();
+                }
+            });
+        }
+
+        function saveUser() {
+            const id = document.getElementById('editUserId').value;
+            const data = {
+                user_id: parseInt(id),
+                name: document.getElementById('editUserName').value,
+                phone: document.getElementById('editUserPhone').value,
+                role: document.getElementById('editUserRole').value
+            };
+            fetch('update.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('User updated successfully!');
+                    closeModal('editUserModal');
+                    loadUsers();
+                }
+            });
+        }
+
+        function saveRoom() {
+            const id = document.getElementById('editRoomId').value;
+            const data = {
+                room_id: parseInt(id),
+                name: document.getElementById('editRoomName').value,
+                price_per_night: parseFloat(document.getElementById('editRoomPrice').value),
+                is_available: parseInt(document.getElementById('editRoomAvailable').value)
+            };
+            fetch('update.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('Room updated successfully!');
+                    closeModal('editRoomModal');
+                    loadRooms();
+                }
+            });
+        }
+
+        function saveService() {
+            const id = document.getElementById('editServiceId').value;
+            const data = {
+                service_id: parseInt(id),
+                name: document.getElementById('editServiceName').value,
+                description: document.getElementById('editServiceDesc').value,
+                price: parseFloat(document.getElementById('editServicePrice').value),
+                duration_minutes: document.getElementById('editServiceDuration').value ? parseInt(document.getElementById('editServiceDuration').value) : null
+            };
+            fetch('update.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('Service updated successfully!');
+                    closeModal('editServiceModal');
+                    loadServices();
+                }
+            });
+        }
+
+        // --- Delete Functions ---
+
+        function deleteBooking(id) {
+            if (!confirm('Delete this booking?')) return;
+            fetch('delete.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({booking_id: id})
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('Booking deleted!');
+                    loadBookings();
+                }
+            });
+        }
+
+        function deleteRoom(id) {
+            if (!confirm('Delete this room?')) return;
+            fetch('delete.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({room_id: id})
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) loadRooms();
+            });
+        }
+
+        function deleteService(id) {
+            if (!confirm('Delete this service?')) return;
+            fetch('delete.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({service_id: id})
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) loadServices();
+            });
+        }
+
+        function deleteUser(id) {
+            if (!confirm('Delete this user?')) return;
+            fetch('delete.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: id})
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast('User deleted!');
+                    loadUsers();
+                }
+            });
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function showToast(msg, type = '') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.className = 'toast' + (type === 'error' ? ' error' : '') + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function formatDate(date) {
+            if (!date) return '-';
+            const d = new Date(date);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    </script>
+</body>
+</html>
